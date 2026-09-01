@@ -1,3 +1,11 @@
+import { Navbar } from '@/components/main/navbar';
+import { HeroSection } from '@/components/main/hero';
+
 export default function Home() {
-  return <div>안녕하세요</div>;
+  return (
+    <main>
+      <Navbar />
+      <HeroSection />
+    </main>
+  );
 }
