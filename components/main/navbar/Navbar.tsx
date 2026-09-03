@@ -122,7 +122,7 @@ export function Navbar() {
         </nav>
 
         {/* Right — primary CTA */}
-        <a className="na-nav__cta" href="#get-started">
+        <a className="na-nav__cta" href="/auth">
           Get Started
         </a>
       </div>

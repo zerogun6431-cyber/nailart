@@ -15,7 +15,7 @@ export function HeroSection() {
       secondaryCtaLabel="Watch Demo"
       secondaryCtaHref="#demo"
       align="center"
-      overlayGradient="linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.48) 45%, rgba(0,0,0,0.62) 100%)"
+      overlayGradient="transparent"
     />
   );
 }
