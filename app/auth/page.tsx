@@ -1,8 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import nailartLogo from '@/public/nailart.png';
 import ShaderBackground from '@/components/shared/ShaderBackground';
 import GoogleSignInButton from '@/components/main/auth/GoogleSignInButton';
+import { createClient } from '@/lib/supabase/server';
 
 // https://www.youtube.com/watch?v=f7SS57LFPco
 const DEMO_VIDEO_ID = 'f7SS57LFPco';
@@ -14,10 +16,19 @@ const DEMO_VIDEO_ID = 'f7SS57LFPco';
    glassmorphism sign-in card. Google is the only entry point,
    no login/signup split.
    ──────────────────────────────────────────────────────────── */
-export default function AuthPage() {
-    return (
-        <main className="auth">
-            <style>{`
+export default async function AuthPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect('/dashboard');
+  }
+
+  return (
+    <main className="auth">
+      <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
 
         .auth {
@@ -215,59 +226,59 @@ export default function AuthPage() {
         }
       `}</style>
 
-            <ShaderBackground ariaLabel="Nailart AI background" />
+      <ShaderBackground ariaLabel="Nailart AI background" />
 
-            <Link href="/" className="auth__back">
-                ← Back
-            </Link>
+      <Link href="/" className="auth__back">
+        ← Back
+      </Link>
 
-            <div className="auth__row">
-                <section className="auth__left">
-                    <div className="auth__left-wash" aria-hidden="true" />
+      <div className="auth__row">
+        <section className="auth__left">
+          <div className="auth__left-wash" aria-hidden="true" />
 
-                    <div className="auth__video">
-                        <iframe
-                            src={`https://www.youtube-nocookie.com/embed/${DEMO_VIDEO_ID}`}
-                            title="Nailart AI demo"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowFullScreen
-                            loading="lazy"
-                        />
-                    </div>
+          <div className="auth__video">
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${DEMO_VIDEO_ID}`}
+              title="Nailart AI demo"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              loading="lazy"
+            />
+          </div>
 
-                    <h2 className="auth__brandmark">NAILART</h2>
-                </section>
+          <h2 className="auth__brandmark">NAILART</h2>
+        </section>
 
-                <section className="auth__right">
-                    <div className="auth__overlay" aria-hidden="true" />
+        <section className="auth__right">
+          <div className="auth__overlay" aria-hidden="true" />
 
-                    <div className="auth__card">
-                        <span className="auth__brand">
-                            <Image
-                                className="auth__logo"
-                                src={nailartLogo}
-                                alt="Nailart AI"
-                                width={62}
-                                height={34}
-                                priority
-                            />
-                            <span className="auth__wordmark">nailart</span>
-                        </span>
+          <div className="auth__card">
+            <span className="auth__brand">
+              <Image
+                className="auth__logo"
+                src={nailartLogo}
+                alt="Nailart AI"
+                width={62}
+                height={34}
+                priority
+              />
+              <span className="auth__wordmark">nailart</span>
+            </span>
 
-                        <h1 className="auth__title">Sign in to Nailart AI</h1>
-                        <p className="auth__subtitle">
-                            Generate click-worthy YouTube thumbnails in seconds.
-                        </p>
+            <h1 className="auth__title">Sign in to Nailart AI</h1>
+            <p className="auth__subtitle">
+              Generate click-worthy YouTube thumbnails in seconds.
+            </p>
 
-                        <GoogleSignInButton />
+            <GoogleSignInButton />
 
-                        <p className="auth__fineprint">
-                            By continuing, you agree to our <a href="#terms">Terms</a> and{' '}
-                            <a href="#privacy">Privacy Policy</a>.
-                        </p>
-                    </div>
-                </section>
-            </div>
-        </main>
-    );
+            <p className="auth__fineprint">
+              By continuing, you agree to our <a href="#terms">Terms</a> and{' '}
+              <a href="#privacy">Privacy Policy</a>.
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
 }

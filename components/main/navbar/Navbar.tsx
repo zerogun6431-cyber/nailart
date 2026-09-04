@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import nailartLogo from '@/public/nailart.png';
+import NavCta from './NavCta';
 
 /* ────────────────────────────────────────────────────────────
    Nailart AI — top navigation bar.
@@ -122,9 +123,7 @@ export function Navbar() {
         </nav>
 
         {/* Right — primary CTA */}
-        <a className="na-nav__cta" href="/auth">
-          Get Started
-        </a>
+        <NavCta />
       </div>
     </header>
   );
