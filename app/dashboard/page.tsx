@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import Navbar from '@/components/dashboard/Navbar';
-import PromptArea from '@/components/dashboard/PromptArea';
+import DashboardShell from '@/components/dashboard/DashboardShell';
 
 /* ────────────────────────────────────────────────────────────
    Dashboard — where a signed-in user lands after Google sign-in.
@@ -50,15 +49,16 @@ export default async function DashboardPage() {
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 120px 24px 48px;
+          padding: 120px 24px 48px 320px;
+        }
+        @media (max-width: 960px) {
+          .dash__stage {
+            padding: 120px 24px 48px;
+          }
         }
       `}</style>
 
-      <Navbar fullName={fullName} avatarUrl={avatarUrl} />
-
-      <div className="dash__stage">
-        <PromptArea />
-      </div>
+      <DashboardShell userId={user.id} fullName={fullName} avatarUrl={avatarUrl} />
     </main>
   );
 }

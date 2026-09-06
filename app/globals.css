@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+@keyframes fade-spin {
+  0%,
+  39%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+@utility animate-fade-spin {
+  animation: fade-spin 1.2s linear infinite;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
