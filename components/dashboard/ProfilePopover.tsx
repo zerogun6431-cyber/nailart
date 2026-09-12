@@ -3,10 +3,12 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useAuth } from '@/components/shared/AuthProvider';
+import PricingModal from './PricingModal';
 
 type ProfilePopoverProps = {
   fullName: string | null;
   avatarUrl: string | null;
+  plan: string;
 };
 
 /**
@@ -14,10 +16,13 @@ type ProfilePopoverProps = {
  * small card below the avatar with the user's name and a Sign out button.
  * Uses :hover (+ :focus-within for keyboard users) — no click state needed.
  */
-export function ProfilePopover({ fullName, avatarUrl }: ProfilePopoverProps) {
+export function ProfilePopover({ fullName, avatarUrl, plan }: ProfilePopoverProps) {
   const { signOut } = useAuth();
   const router = useRouter();
   const [signingOut, setSigningOut] = useState(false);
+  const [pricingOpen, setPricingOpen] = useState(false);
+  const [openingPortal, setOpeningPortal] = useState(false);
+  const [portalError, setPortalError] = useState<string | null>(null);
 
   const initial = (fullName?.trim().charAt(0) || 'N').toUpperCase();
 
@@ -26,6 +31,23 @@ export function ProfilePopover({ fullName, avatarUrl }: ProfilePopoverProps) {
     await signOut();
     router.push('/');
     router.refresh();
+  };
+
+  const handleManageSubscription = async () => {
+    if (openingPortal) return;
+    setOpeningPortal(true);
+    setPortalError(null);
+    try {
+      const res = await fetch('/api/customer-portal', { method: 'POST' });
+      const json = await res.json();
+      if (!res.ok || !json.url) {
+        throw new Error(json.error ?? '고객 포털을 여는 데 실패했어요.');
+      }
+      window.location.href = json.url as string;
+    } catch (err) {
+      setPortalError(err instanceof Error ? err.message : '고객 포털을 여는 데 실패했어요.');
+      setOpeningPortal(false);
+    }
   };
 
   return (
@@ -125,6 +147,54 @@ export function ProfilePopover({ fullName, avatarUrl }: ProfilePopoverProps) {
           text-overflow: ellipsis;
           white-space: nowrap;
         }
+        .profile-pop__pricing {
+          width: 100%;
+          padding: 9px 14px;
+          border: 0;
+          border-radius: 10px;
+          background: transparent;
+          color: rgba(255, 255, 255, 0.85);
+          font: inherit;
+          font-size: 0.85rem;
+          font-weight: 600;
+          letter-spacing: -0.01em;
+          cursor: pointer;
+          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+          transition: box-shadow 0.15s ease, color 0.15s ease;
+        }
+        .profile-pop__pricing:hover {
+          color: #fff;
+          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+        }
+        .profile-pop__manage {
+          width: 100%;
+          padding: 9px 14px;
+          border: 0;
+          border-radius: 10px;
+          background: transparent;
+          color: rgba(255, 255, 255, 0.85);
+          font: inherit;
+          font-size: 0.85rem;
+          font-weight: 600;
+          letter-spacing: -0.01em;
+          cursor: pointer;
+          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+          transition: box-shadow 0.15s ease, color 0.15s ease;
+        }
+        .profile-pop__manage:hover {
+          color: #fff;
+          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+        }
+        .profile-pop__manage:disabled {
+          opacity: 0.6;
+          cursor: default;
+        }
+        .profile-pop__error {
+          margin: 0;
+          text-align: center;
+          font-size: 0.75rem;
+          color: #fca5a5;
+        }
         .profile-pop__signout {
           width: 100%;
           padding: 9px 14px;
@@ -172,11 +242,27 @@ export function ProfilePopover({ fullName, avatarUrl }: ProfilePopoverProps) {
             </span>
           )}
           {fullName && <p className="profile-pop__name">{fullName}</p>}
+          <button type="button" className="profile-pop__pricing" onClick={() => setPricingOpen(true)}>
+            View Plan
+          </button>
+          {plan !== 'free' && (
+            <button
+              type="button"
+              className="profile-pop__manage"
+              onClick={handleManageSubscription}
+              disabled={openingPortal}
+            >
+              {openingPortal ? '이동 중…' : 'Manage subscription'}
+            </button>
+          )}
+          {portalError && <p className="profile-pop__error">{portalError}</p>}
           <button type="button" className="profile-pop__signout" onClick={handleSignOut} disabled={signingOut}>
             {signingOut ? 'Signing out…' : 'Sign out'}
           </button>
         </div>
       </div>
+
+      <PricingModal open={pricingOpen} onClose={() => setPricingOpen(false)} plan={plan} />
     </div>
   );
 }

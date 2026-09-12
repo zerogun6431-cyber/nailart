@@ -20,6 +20,9 @@ export default async function DashboardPage() {
     redirect('/auth');
   }
 
+  const { data: profile } = await supabase.from('users').select('plan').eq('id', user.id).single();
+  const plan = profile?.plan ?? 'free';
+
   const fullName: string | null =
     (user.user_metadata?.full_name as string | undefined) ??
     (user.user_metadata?.name as string | undefined) ??
@@ -58,7 +61,7 @@ export default async function DashboardPage() {
         }
       `}</style>
 
-      <DashboardShell userId={user.id} fullName={fullName} avatarUrl={avatarUrl} />
+      <DashboardShell userId={user.id} fullName={fullName} avatarUrl={avatarUrl} plan={plan} />
     </main>
   );
 }

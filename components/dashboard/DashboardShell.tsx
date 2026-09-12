@@ -9,6 +9,7 @@ type DashboardShellProps = {
   userId: string;
   fullName: string | null;
   avatarUrl: string | null;
+  plan: string;
 };
 
 /* ────────────────────────────────────────────────────────────
@@ -17,12 +18,12 @@ type DashboardShellProps = {
    Sidebar (reads it) and PromptArea (appends to it, and reads it
    too — for the "attach from my thumbnails" reference picker).
    ──────────────────────────────────────────────────────────── */
-export function DashboardShell({ userId, fullName, avatarUrl }: DashboardShellProps) {
+export function DashboardShell({ userId, fullName, avatarUrl, plan }: DashboardShellProps) {
   const { images, addImage } = useGeneratedImages(userId);
 
   return (
     <>
-      <Navbar fullName={fullName} avatarUrl={avatarUrl} />
+      <Navbar fullName={fullName} avatarUrl={avatarUrl} plan={plan} />
       <Sidebar images={images} />
       <div className="dash__stage">
         <PromptArea images={images} onImageGenerated={addImage} />

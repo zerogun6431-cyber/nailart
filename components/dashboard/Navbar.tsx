@@ -6,6 +6,7 @@ import ProfilePopover from './ProfilePopover';
 type NavbarProps = {
   fullName: string | null;
   avatarUrl: string | null;
+  plan: string;
 };
 
 /* ────────────────────────────────────────────────────────────
@@ -13,7 +14,7 @@ type NavbarProps = {
    (logo top-left, profile top-right) over the transparent canvas,
    each its own glass chip.
    ──────────────────────────────────────────────────────────── */
-export function Navbar({ fullName, avatarUrl }: NavbarProps) {
+export function Navbar({ fullName, avatarUrl, plan }: NavbarProps) {
   return (
     <>
       <style>{`
@@ -51,7 +52,7 @@ export function Navbar({ fullName, avatarUrl }: NavbarProps) {
         <Image className="dnav-logo__img" src={nailartLogo} alt="" width={44} height={44} priority />
       </Link>
 
-      <ProfilePopover fullName={fullName} avatarUrl={avatarUrl} />
+      <ProfilePopover fullName={fullName} avatarUrl={avatarUrl} plan={plan} />
     </>
   );
 }
